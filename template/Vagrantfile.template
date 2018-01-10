@@ -1,0 +1,85 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # config.vm.base_mac = "080027D4964C"
+  config.vm.box = "djalpine36"
+  # config.vm.hostname = "{{PROJECT_NAME}}-server"
+
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # vm vagrant name
+  config.vm.define "{{PROJECT_NAME}}"
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "{{PROJECT_NAME}}"
+  end
+
+  # HTTP
+  config.vm.network "forwarded_port", guest: 8000, guest_ip: "0.0.0.0", host: 8001
+  #  config.vm.network "public_network"
+
+  # PostgreSQL
+  config.vm.network "forwarded_port", guest: 5432, guest_ip: "0.0.0.0", host: 5433, auto_correct: true
+
+  # sync folder
+  config.vm.synced_folder "./", "/home/vagrant/sync"
+
+  # hardware
+  config.vm.provider :virtualbox do |v, override|
+    v.gui = false
+    v.functional_vboxsf = false
+    v.check_guest_additions = false
+    v.customize ["modifyvm", :id, "--vram", 256]
+    v.customize ["modifyvm", :id, "--cpus", 2]
+    v.customize ["modifyvm", :id, "--memory", 2048]
+  end
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  config.vm.provision "main", type: "shell", privileged: false, inline: <<-SHELL
+    echo "CurrentUser: $(whoami)"
+    cd /home/vagrant
+    alias python='python3'
+    alias pip='pip3'
+    export PATH=/usr/bin:$PATH
+    echo "fixing mc for ssh view"
+
+    MC2PATH=/home/vagrant/.local/share/mc
+    export PATH=$MC2PATH:$PATH
+    mkdir -p $MC2PATH && touch $MC2PATH/mc2
+    echo \#!/bin/bash >> $MC2PATH/mc2
+    echo mc -a --skin=dark >> $MC2PATH/mc2
+    chmod +x $MC2PATH/mc2
+
+    echo "activate virtualenv:"
+    PROJECT_NAME={{PROJECT_NAME}}
+    export WORKON_HOME=$HOME/.virtualenvs
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+    export VIRTUALENVWRAPPER_VIRTUALENV=/usr/bin/virtualenv
+    source /usr/bin/virtualenvwrapper.sh
+    mkvirtualenv $PROJECT_NAME
+    workon $PROJECT_NAME
+
+    ENVARS=/etc/profile.d/env_vars.sh
+    sudo touch $ENVARS
+    echo export PATH=$MC2PATH:$PATH | sudo tee -a $ENVARS
+    echo export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 | sudo tee -a $ENVARS
+    echo export VIRTUALENVWRAPPER_VIRTUALENV=/usr/bin/virtualenv | sudo tee -a $ENVARS
+    echo export WORKON_HOME=$HOME/.virtualenvs | sudo tee -a $ENVARS
+    echo source /usr/bin/virtualenvwrapper.sh | sudo tee -a $ENVARS
+    echo workon $PROJECT_NAME | sudo tee -a $ENVARS
+
+    pip3 install -r /home/vagrant/sync/requirements/base.txt --no-index --find-links file:///home/vagrant/sync/pip_cache
+
+  SHELL
+
+end

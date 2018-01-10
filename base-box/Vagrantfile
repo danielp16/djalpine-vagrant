@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "generic/alpine36"
+  config.vm.box_check_update = false
+
+  # taken from generic/alpine36 box
+  config.vm.base_mac = "080027D4964C"
+
+  # HTTP
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  config.vm.define "djalpine"
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "djalpine"
+  end
+
+  config.vm.synced_folder "./", "/home/vagrant/sync", :disabled => true
+
+  # Default Hardware configuration
+  config.vm.provider :virtualbox do |v, override|
+    v.gui = false
+    v.functional_vboxsf = false
+    v.check_guest_additions = false
+    v.customize ["modifyvm", :id, "--vram", 256]
+    v.customize ["modifyvm", :id, "--cpus", 2]
+    v.customize ["modifyvm", :id, "--memory", 2048]
+  end
+
+  # Run provisioning script
+  config.vm.provision "shell", path: "./provision.sh"
+
+end
