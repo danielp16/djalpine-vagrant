@@ -26,11 +26,18 @@ run the `djalpine.sh` script for full provision or each step separately
 `02-generate-vagrant` generates final Vagranfile to be used in your project,
 note give it your project name as cli argument.
 
-as an output you will get new `Vagranfile` and a new vm box  
+as an output you will get new `Vagranfile` at the root of this project and a new vm box on your machine
 
 copy the generated `Vagrantfile` to your project root folder
 then:
 `Vagrant up`
 and you good to go
+
+
+## exposed ports on the machine:
+on your host machine, use the 127.0.0.1 localhost ip
+8001 - django dev web server
+5433 - postgres database
+2222 - ssh
 
 Happy Django coding :)

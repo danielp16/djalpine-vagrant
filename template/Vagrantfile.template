@@ -53,7 +53,7 @@ Vagrant.configure("2") do |config|
     export PATH=/usr/bin:$PATH
     echo "fixing mc for ssh view"
 
-    MC2PATH=/home/vagrant/.local/share/mc
+    export MC2PATH=/home/vagrant/.local/share/mc
     export PATH=$MC2PATH:$PATH
     mkdir -p $MC2PATH && touch $MC2PATH/mc2
     echo \#!/bin/bash >> $MC2PATH/mc2
@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
     chmod +x $MC2PATH/mc2
 
     echo "activate virtualenv:"
-    PROJECT_NAME={{PROJECT_NAME}}
+    export PROJECT_NAME={{PROJECT_NAME}}
     export WORKON_HOME=$HOME/.virtualenvs
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
     export VIRTUALENVWRAPPER_VIRTUALENV=/usr/bin/virtualenv
@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
     mkvirtualenv $PROJECT_NAME
     workon $PROJECT_NAME
 
-    ENVARS=/etc/profile.d/env_vars.sh
+    export ENVARS=/etc/profile.d/env_vars.sh
     sudo touch $ENVARS
     echo export PATH=$MC2PATH:$PATH | sudo tee -a $ENVARS
     echo export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 | sudo tee -a $ENVARS
