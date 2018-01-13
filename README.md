@@ -22,8 +22,11 @@ prerequisite - install vagrant and preferably some IDE/text editor for developme
 clone the repo
 
 run the `djalpine.sh` script for full provision or each step separately
+
 `01-generate-box.sh` will create new box from generic/alpine 3.6
+
 `02-generate-vagrant` generates final Vagranfile to be used in your project,
+
 note give it your project name as cli argument.
 
 as an output you will get new `Vagranfile` at the root of this project and a new vm box on your machine
@@ -36,8 +39,11 @@ and you good to go
 
 ## exposed ports on the machine:
 on your host machine, use the 127.0.0.1 localhost ip
+
 8001 - django dev web server
+
 5433 - postgres database
+
 2222 - ssh
 
 Happy Django coding :)

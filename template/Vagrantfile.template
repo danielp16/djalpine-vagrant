@@ -31,7 +31,9 @@ Vagrant.configure("2") do |config|
 
   # sync folder
   config.vm.synced_folder "./", "/home/vagrant/sync"
-
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.rsync_only_changed.rsync_on_startup = true
+  
   # hardware
   config.vm.provider :virtualbox do |v, override|
     v.gui = false
@@ -79,7 +81,10 @@ Vagrant.configure("2") do |config|
     echo workon $PROJECT_NAME | sudo tee -a $ENVARS
 
     pip3 install -r /home/vagrant/sync/requirements/base.txt --no-index --find-links file:///home/vagrant/sync/pip_cache
-
+    
+	psql -Upostgres -c "CREATE DATABASE {{PROJECT_NAME}}_db WITH OWNER postgres ENCODING 'utf-8';"
+	echo "Provisioning {{PROJECT_NAME}} dev machine Finished."
+	
   SHELL
 
 end

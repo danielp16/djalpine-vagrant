@@ -17,7 +17,8 @@ Vagrant.configure("2") do |config|
     vb.name = "djalpine"
   end
 
-  config.vm.synced_folder "./", "/home/vagrant/sync", :disabled => true
+  config.vm.synced_folder "./", "/home/vagrant/sync"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Default Hardware configuration
   config.vm.provider :virtualbox do |v, override|

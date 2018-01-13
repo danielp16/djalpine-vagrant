@@ -3,8 +3,10 @@
 BOXNAME=djalpine36
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/../base-box
+echo $PWD
 
 vagrant up
+vagrant provision
 mkdir -p $DIR/../boxes
 
 if [ -f $DIR/../boxes/$BOXNAME.box ] ; then
