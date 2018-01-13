@@ -30,9 +30,9 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 5432, guest_ip: "0.0.0.0", host: 5433, auto_correct: true
 
   # sync folder
-  config.vm.synced_folder "./", "/home/vagrant/sync"
+  config.vm.synced_folder "./", "/home/vagrant/sync", rsync__args: ["--update"]
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.rsync_only_changed.rsync_on_startup = true
+  config.rsync_only_changed.rsync_on_startup = true
   
   # hardware
   config.vm.provider :virtualbox do |v, override|
